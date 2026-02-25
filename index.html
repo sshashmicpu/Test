@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Store - My Files</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #0f172a; color: #f8fafc; }
+        .glass-card { 
+            background: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover { transform: translateY(-5px); border-color: #38bdf8; }
+        .gradient-text { background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="min-h-screen pb-10">
+
+    <header class="py-10 text-center">
+        <h1 class="text-4xl font-bold gradient-text">Demo Store</h1>
+        <p class="text-gray-400 mt-2">Apki Tamam Files, Ab Ek Hi Jagah Par</p>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 space-y-12">
+
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fa-solid fa-book-open text-red-500 text-2xl"></i>
+                <h2 class="text-2xl font-semibold">PDF Books & Documents</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium">Maqsood ul Quran</h3>
+                        <p class="text-sm text-gray-400 mb-4">Urdu Translation & Tafseer</p>
+                    </div>
+                    <a href="https://github.com/sshashmicpu/Test/raw/main/maqsood%20ul%20Quran%20Urdu%20by%20...pdf" 
+                       class="w-full bg-red-600 hover:bg-red-700 text-center py-2 rounded-xl text-sm font-semibold transition">
+                       Download PDF
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fa-brands fa-android text-green-500 text-2xl"></i>
+                <h2 class="text-2xl font-semibold">Android Applications</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium">Your App Name</h3>
+                        <p class="text-sm text-gray-400 mb-4">APK File (Android)</p>
+                    </div>
+                    <a href="https://github.com/sshashmicpu/Test/raw/main/Apk/base.apk" 
+                       class="w-full bg-green-600 hover:bg-green-700 text-center py-2 rounded-xl text-sm font-semibold transition">
+                       Install App
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fa-solid fa-globe text-blue-500 text-2xl"></i>
+                <h2 class="text-2xl font-semibold">Web Sites & Links</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium">Project Preview</h3>
+                        <p class="text-sm text-gray-400 mb-4">HTML Web Interface</p>
+                    </div>
+                    <a href="Sites/your-file.html" 
+                       class="w-full bg-blue-600 hover:bg-blue-700 text-center py-2 rounded-xl text-sm font-semibold transition">
+                       Visit Site
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="text-center mt-20 text-gray-500 text-sm">
+        <p>© 2026 Demo Store | Made with ❤️ for sshashmicpu</p>
+    </footer>
+
+</body>
+</html>
