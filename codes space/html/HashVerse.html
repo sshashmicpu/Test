@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Verse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0f172a">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+        
+        :root { 
+            --neon-blue: #38bdf8; 
+            --neon-green: #22c55e; 
+            --neon-red: #ef4444; 
+            --bg-deep: #0f111a; 
+            --card-bg: #1a1d29; 
+        }
+
+        body { 
+            background-color: var(--bg-deep); 
+            color: #f1f5f9; 
+            font-family: 'Rajdhani', sans-serif; 
+            margin: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        header { background: #111420; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .scifi-header { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+
+        .promo-banner {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.05);
+            min-height: 180px;
+        }
+
+        .glass-panel { 
+            background: var(--card-bg); 
+            border-radius: 24px; 
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .glass-panel:hover { 
+            transform: scale(1.03); 
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .app-icon { width: 80px; height: 80px; border-radius: 18px; object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+
+        .pdf-preview-container { 
+            width: 100%; height: 220px; background: #000; border-radius: 16px; 
+            display: flex; align-items: center; justify-content: center; padding: 10px; 
+        }
+
+        .pdf-preview-container img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
+
+        .tab-btn { 
+            padding: 12px 20px; border-radius: 50px; font-weight: 700; transition: 0.3s; 
+            background: #24283b; color: #94a3b8; font-size: 14px;
+        }
+
+        .tab-btn.active { background: #3b82f6; color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+
+        .action-btn {
+            background: #00c853; color: white; border-radius: 50px; padding: 8px 16px;
+            font-weight: bold; font-size: 12px; text-transform: uppercase; transition: 0.2s;
+        }
+
+        .action-btn:hover { background: #00e676; transform: translateY(-2px); }
+
+        .ss-slider { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 10px; scrollbar-width: none; }
+        .ss-slider::-webkit-scrollbar { display: none; }
+        .ss-img { flex: 0 0 140px; height: 250px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+
+        #modal-overlay { backdrop-filter: blur(10px); background: rgba(0, 0, 0, 0.92); }
+
+        .search-container { background: #1e2235; border-radius: 50px; padding: 4px 16px; }
+
+        /* Row Scrolling for Home */
+        .row-container { display: flex; overflow-x: auto; gap: 20px; padding: 10px 5px; scrollbar-width: none; }
+        .row-container::-webkit-scrollbar { display: none; }
+        .row-item { flex: 0 0 160px; }
+        .row-item-wide { flex: 0 0 280px; }
+
+        /* Full Screen Image Slider */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .snap-center-item { scroll-snap-align: center; flex: 0 0 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 10px; }
+        .snap-center-item img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <header class="sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://raw.githubusercontent.com/sshashmicpu/hashverse/main/icons/hashverseicon.png" class="w-10 h-10 rounded-xl shadow-lg" alt="Logo">
+                <h1 class="scifi-header text-xl font-bold bg-gradient-to-r from-blue-400 to-white bg-clip-text text-transparent">HASH VERSE</h1>
+            </div>
+            <div class="search-container flex items-center w-40 md:w-80">
+                <i class="fas fa-search text-slate-500 mr-2"></i>
+                <input type="text" id="globalSearch" placeholder="Search..." class="bg-transparent border-none text-sm focus:outline-none w-full py-1">
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-24">
+        
+        <section id="banner-section" class="mt-6 mb-8 px-2">
+            <!-- Added cursor-pointer and onclick to make the banner tappable -->
+            <div id="dynamic-banner" onclick="if(typeof CURRENT_BANNER_ACTION === 'function') CURRENT_BANNER_ACTION()" class="promo-banner p-8 flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300">
+                <div class="text-center md:text-left flex-1 pointer-events-none">
+                    <h2 id="banner-title" class="text-3xl font-bold text-white mb-2 line-clamp-2">Explore Universe</h2>
+                    <p id="banner-desc" class="text-slate-400">Loading featured content...</p>
+                </div>
+                <img id="banner-img" src="https://raw.githubusercontent.com/sshashmicpu/Test/main/icons/hashverseicon.png" class="w-24 h-24 md:w-32 md:h-32 rounded-3xl shadow-2xl object-cover shrink-0 pointer-events-none">
+            </div>
+        </section>
+
+        <nav id="main-nav" class="flex overflow-x-auto gap-3 py-4 no-scrollbar mb-6 px-2">
+            <button onclick="switchTab('home')" class="tab-btn active shrink-0" id="tab-home">Home</button>
+            <button onclick="switchTab('nebula')" class="tab-btn shrink-0" id="tab-nebula">Apps Nebula</button>
+            <button onclick="switchTab('galaxy')" class="tab-btn shrink-0" id="tab-galaxy">PDF Galaxy</button>
+            <button onclick="switchTab('space')" class="tab-btn shrink-0" id="tab-space">Codes Space</button>
+            <button onclick="switchTab('station')" class="tab-btn shrink-0" id="tab-station">Sites Station</button>
+        </nav>
+
+        <!-- New Global Search Results Section -->
+        <section id="sec-search-results" class="hidden mb-10 px-2">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-blue-400 uppercase tracking-widest">Search Results</h2>
+                <button onclick="clearSearch()" class="text-red-400 text-sm hover:text-red-300 transition"><i class="fas fa-times mr-1"></i>Clear</button>
+            </div>
+            <div id="grid-search-results" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+        </section>
+
+        <div id="loading" class="flex flex-col items-center justify-center py-20">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <section id="sec-home" class="tab-content">
+            <div class="mb-10">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h2 class="text-xl font-bold text-white">Trending Apps</h2>
+                    <span class="text-blue-400 text-sm cursor-pointer" onclick="switchTab('nebula')">See All</span>
+                </div>
+                <div id="row-nebula" class="row-container"></div>
+            </div>
+
+            <div class="mb-10">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h2 class="text-xl font-bold text-orange-400">Latest PDFs</h2>
+                    <span class="text-blue-400 text-sm cursor-pointer" onclick="switchTab('galaxy')">See All</span>
+                </div>
+                <div id="row-galaxy" class="row-container"></div>
+            </div>
+
+            <div class="mb-10">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h2 class="text-xl font-bold text-purple-400">Recent Codes</h2>
+                    <span class="text-blue-400 text-sm cursor-pointer" onclick="switchTab('space')">See All</span>
+                </div>
+                <div id="row-space" class="row-container"></div>
+            </div>
+
+            <div class="mb-10">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h2 class="text-xl font-bold text-green-400">Top Portals</h2>
+                    <span class="text-blue-400 text-sm cursor-pointer" onclick="switchTab('station')">See All</span>
+                </div>
+                <div id="row-station" class="row-container"></div>
+            </div>
+        </section>
+
+        <section id="sec-nebula" class="tab-content hidden">
+            <div class="flex items-center justify-between mb-6 px-2">
+                <h2 class="text-xl font-bold text-white"><i class="fas fa-fire text-orange-500 mr-2"></i> Hot Apps</h2>
+            </div>
+            <div id="grid-nebula" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+        </section>
+
+        <section id="sec-galaxy" class="tab-content hidden">
+            <!-- New Sub-Section Nav Buttons -->
+            <div class="flex gap-3 overflow-x-auto no-scrollbar mb-8 px-2 pb-2 border-b border-slate-800">
+                <button onclick="scrollToSection('sec-sakhir-hashmi')" class="bg-slate-800 text-blue-400 px-5 py-2.5 rounded-full text-xs font-bold shrink-0 border border-blue-500/30 hover:bg-blue-500/20 transition shadow-lg">By Syed Sakhir Hashmi</button>
+                <button onclick="scrollToSection('sec-hashmi-research')" class="bg-slate-800 text-red-400 px-5 py-2.5 rounded-full text-xs font-bold shrink-0 border border-red-500/30 hover:bg-red-500/20 transition shadow-lg">By Hashmi Research Hub</button>
+                <button onclick="scrollToSection('sec-others')" class="bg-slate-800 text-orange-400 px-5 py-2.5 rounded-full text-xs font-bold shrink-0 border border-orange-500/30 hover:bg-orange-500/20 transition shadow-lg">Others</button>
+            </div>
+
+            <div id="sec-sakhir-hashmi" class="mb-12 pt-4">
+                <h2 class="text-xl font-bold text-blue-400 mb-6 px-2 uppercase tracking-widest">By Syed Sakhir Hashmi</h2>
+                <div id="grid-sakhir" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+            </div>
+            
+            <div id="sec-hashmi-research" class="mb-12 pt-4">
+                <h2 class="text-xl font-bold text-red-500 mb-6 px-2 uppercase tracking-widest">By Hashmi Research Hub</h2>
+                <div id="grid-research" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+            </div>
+            
+            <div id="sec-others" class="pt-4">
+                <h2 class="text-xl font-bold text-orange-400 mb-6 px-2 uppercase tracking-widest">Others</h2>
+                <div id="grid-others" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+            </div>
+        </section>
+
+        <section id="sec-space" class="tab-content hidden">
+            <div id="grid-space" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="sec-station" class="tab-content hidden">
+            <div id="grid-station" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+    </main>
+
+    <!-- App Details Modal -->
+    <div id="modal-overlay" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4" onclick="if(event.target == this) closeModal()">
+        <div class="glass-panel w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 md:p-10 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Full Screen Image Slider Overlay -->
+    <div id="slider-overlay" class="fixed inset-0 z-[200] hidden bg-black/98 flex flex-col backdrop-blur-md" onclick="if(event.target == this) closeSlider()">
+        <div class="flex justify-between items-center p-4 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
+            <span id="slider-counter" class="text-white font-bold tracking-widest text-lg ml-2"></span>
+            <button onclick="closeSlider()" class="text-white text-3xl hover:text-red-500 transition mr-2"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="slider-container" class="flex-1 flex overflow-x-auto snap-x snap-mandatory hide-scrollbar items-center" onscroll="updateSliderCounter()">
+            <!-- Images will be injected dynamically here -->
+        </div>
+    </div>
+
+    <!-- Go to Start / End Buttons -->
+    <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 bg-blue-600/80 hover:bg-blue-500 text-white rounded-full shadow-lg backdrop-blur-sm flex items-center justify-center border border-blue-400/30 transition-all shadow-blue-500/20"><i class="fas fa-chevron-up"></i></button>
+        <button onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" class="w-10 h-10 bg-blue-600/80 hover:bg-blue-500 text-white rounded-full shadow-lg backdrop-blur-sm flex items-center justify-center border border-blue-400/30 transition-all shadow-blue-500/20"><i class="fas fa-chevron-down"></i></button>
+    </div>
+
+    <footer class="py-10 text-center border-t border-slate-800">
+        <p class="text-slate-500 text-sm">© 2026 Syed Sakhir Hashmi</p>
+    </footer>
+
+    <script>
+        const CONFIG = { 
+            owner: 'sshashmicpu', 
+            repo: 'hashverse', 
+            branch: 'main', 
+            folders: { 
+                apps: "apps nebula/androis apk's", 
+                icons: "icons", 
+                desc: "apps description txt", 
+                pdf: "pdf galaxy", 
+                html: "codes space/html", 
+                sites: "sites station/url's", 
+                ss: "screenshots" 
+            } 
+        };
+        
+        let REPO_DATA = [];
+        let APP_MAP = {};
+        let PDF_LIST = [];
+        let CURRENT_SCREENSHOTS = []; // Added for Image Slider
+        let CURRENT_BANNER_ACTION = null; // Added to store dynamic banner click action
+
+        async function init() {
+            try {
+                const res = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/git/trees/${CONFIG.branch}?recursive=1`);
+                const data = await res.json();
+                REPO_DATA = data.tree;
+                processMapping();
+                renderApps();
+                renderPDFs();
+                renderCodes();
+                renderSites();
+                updateBanner();
+                document.getElementById('loading').classList.add('hidden');
+            } catch (err) { console.error("System Failure", err); }
+        }
+
+        function processMapping() {
+            REPO_DATA.forEach(item => {
+                const fileName = item.path.split('/').pop().toLowerCase();
+                const baseName = fileName.split('.')[0];
+
+                if (item.path.includes(CONFIG.folders.apps) && fileName.endsWith('.apk')) {
+                    const realBase = item.path.split('/').pop().split('.')[0];
+                    if(!APP_MAP[realBase.toLowerCase()]) APP_MAP[realBase.toLowerCase()] = { realName: realBase };
+                    APP_MAP[realBase.toLowerCase()].apk = item.path;
+                }
+                if (item.path.startsWith(CONFIG.folders.icons) && fileName.includes('icon')) {
+                    const iconBase = fileName.replace('icon', '').split('.')[0];
+                    if(!APP_MAP[iconBase]) APP_MAP[iconBase] = { realName: iconBase };
+                    APP_MAP[iconBase].icon = item.path;
+                }
+                if (item.path.startsWith(CONFIG.folders.desc) && fileName.includes('description')) {
+                    const descBase = fileName.replace('description', '').split('.')[0];
+                    if(!APP_MAP[descBase]) APP_MAP[descBase] = { realName: descBase };
+                    APP_MAP[descBase].descPath = item.path;
+                }
+                if (item.path.startsWith(CONFIG.folders.html) && fileName.endsWith('.html')) {
+                    if(!APP_MAP[baseName]) APP_MAP[baseName] = { realName: baseName };
+                    APP_MAP[baseName].codePath = item.path;
+                }
+            });
+        }
+
+        function updateBanner() {
+            const appKeys = Object.keys(APP_MAP).filter(k => APP_MAP[k].apk);
+            const pdfs = REPO_DATA.filter(item => item.path.includes(CONFIG.folders.pdf) && item.path.toLowerCase().endsWith('.pdf'));
+            
+            const showPdf = Math.random() > 0.5 && pdfs.length > 0;
+            
+            if (showPdf) {
+                const randomPdf = pdfs[Math.floor(Math.random() * pdfs.length)];
+                const name = randomPdf.path.split('/').pop();
+                const url = getRawUrl(randomPdf.path);
+                const thumb = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=600&t=fit`;
+                
+                document.getElementById('banner-title').innerText = name.replace('.pdf', '');
+                document.getElementById('banner-desc').innerText = "Featured PDF in Galaxy";
+                document.getElementById('banner-img').src = thumb;
+                
+                // Set to portrait layout for PDF
+                document.getElementById('banner-img').className = "w-24 h-36 md:w-32 md:h-48 rounded-xl shadow-2xl object-cover shrink-0 pointer-events-none";
+                
+                // Assign action for banner click
+                CURRENT_BANNER_ACTION = () => window.open(url, '_blank');
+            } else if (appKeys.length > 0) {
+                const randomKey = appKeys[Math.floor(Math.random() * appKeys.length)];
+                const app = APP_MAP[randomKey];
+                
+                document.getElementById('banner-title').innerText = app.realName;
+                document.getElementById('banner-desc').innerText = "Featured App in Apps Nebula";
+                if(app.icon) document.getElementById('banner-img').src = getRawUrl(app.icon);
+                
+                // Set to square layout for App
+                document.getElementById('banner-img').className = "w-24 h-24 md:w-32 md:h-32 rounded-3xl shadow-2xl object-cover shrink-0 pointer-events-none";
+                
+                // Assign action for banner click
+                CURRENT_BANNER_ACTION = () => openAppModal(randomKey);
+            }
+        }
+
+        function renderApps() {
+            const grid = document.getElementById('grid-nebula');
+            const row = document.getElementById('row-nebula');
+            Object.keys(APP_MAP).forEach(key => {
+                const app = APP_MAP[key];
+                if(!app.apk) return;
+                const iconUrl = app.icon ? getRawUrl(app.icon) : 'https://cdn-icons-png.flaticon.com/512/2584/2584651.png';
+                const html = `
+                <div class="glass-panel p-5 text-center flex flex-col items-center cursor-pointer h-full" onclick="openAppModal('${key}')">
+                    <img src="${iconUrl}" class="app-icon mb-4">
+                    <h3 class="text-sm font-bold text-slate-100 mb-4 h-10 line-clamp-2 w-full">${app.realName}</h3>
+                    <button class="action-btn w-full mt-auto">Details</button>
+                </div>`;
+                grid.innerHTML += html;
+                row.innerHTML += `<div class="row-item">${html}</div>`;
+            });
+        }
+
+        async function openAppModal(key) {
+            const app = APP_MAP[key];
+            const content = document.getElementById('modal-content');
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            content.innerHTML = `<div class="flex justify-center py-10"><i class="fas fa-circle-notch animate-spin text-4xl text-blue-500"></i></div>`;
+
+            let descHtml = "No description available.";
+            if (app.descPath) {
+                const res = await fetch(getRawUrl(app.descPath));
+                const text = await res.text();
+                descHtml = text.replace(/\n/g, "<br>").replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-400 underline">$1</a>');
+            }
+
+            let ssHtml = "";
+            const screenshots = REPO_DATA.filter(item => 
+                item.path.startsWith(CONFIG.folders.ss) && 
+                item.path.toLowerCase().includes(key.toLowerCase() + "ss")
+            );
+
+            if(screenshots.length > 0) {
+                CURRENT_SCREENSHOTS = screenshots.map(ss => getRawUrl(ss.path));
+                ssHtml = `<div class="ss-slider mb-6">`;
+                screenshots.forEach((ss, idx) => { 
+                    ssHtml += `<img src="${getRawUrl(ss.path)}" class="ss-img cursor-pointer transition hover:opacity-80" onclick="openImageSlider(${idx})">`; 
+                });
+                ssHtml += `</div>`;
+            } else {
+                CURRENT_SCREENSHOTS = [];
+            }
+
+            const iconUrl = app.icon ? getRawUrl(app.icon) : 'https://cdn-icons-png.flaticon.com/512/2584/2584651.png';
+            content.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-6 items-center md:items-start mb-8">
+                    <img src="${iconUrl}" class="w-24 h-24 rounded-2xl shadow-xl object-cover">
+                    <div class="flex-1 text-center md:text-left">
+                        <h2 class="text-2xl font-bold text-white mb-4">${app.realName}</h2>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-3">
+                            <a href="${getRawUrl(app.apk)}" class="action-btn px-10 py-3 text-sm flex items-center gap-2"><i class="fas fa-download"></i> INSTALL</a>
+                            <a href="https://sshashmicpu.github.io/${key}/" target="_blank" class="bg-slate-800 text-white px-6 py-3 rounded-full font-bold text-xs hover:bg-slate-700 transition">LIVE SITE</a>
+                        </div>
+                    </div>
+                </div>
+                ${ssHtml}
+                <div class="rich-description mb-6 p-4 bg-black/30 rounded-2xl border border-white/5 text-slate-300 text-sm leading-relaxed">${descHtml}</div>
+            `;
+        }
+
+        // New Image Slider Functions
+        function openImageSlider(idx) {
+            const container = document.getElementById('slider-container');
+            container.innerHTML = '';
+            
+            CURRENT_SCREENSHOTS.forEach((src) => {
+                container.innerHTML += `
+                <div class="snap-center-item" onclick="closeSlider()">
+                    <img src="${src}" onclick="event.stopPropagation()">
+                </div>`;
+            });
+            
+            document.getElementById('slider-overlay').classList.remove('hidden');
+            
+            setTimeout(() => {
+                const targetSlide = container.children[idx];
+                if(targetSlide) {
+                    targetSlide.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'start' });
+                }
+                updateSliderCounter();
+            }, 10);
+        }
+
+        function closeSlider() {
+            document.getElementById('slider-overlay').classList.add('hidden');
+        }
+
+        function updateSliderCounter() {
+            const container = document.getElementById('slider-container');
+            if(!container || container.children.length === 0) return;
+            const scrollLeft = container.scrollLeft;
+            const width = container.clientWidth;
+            const idx = Math.round(scrollLeft / width);
+            document.getElementById('slider-counter').innerText = `${idx + 1} / ${CURRENT_SCREENSHOTS.length}`;
+        }
+
+        function renderPDFs() {
+            const gridSakhir = document.getElementById('grid-sakhir');
+            const gridResearch = document.getElementById('grid-research');
+            const gridOthers = document.getElementById('grid-others');
+            const row = document.getElementById('row-galaxy');
+            
+            REPO_DATA.forEach(item => {
+                if (item.path.includes(CONFIG.folders.pdf) && item.path.toLowerCase().endsWith('.pdf')) {
+                    const name = item.path.split('/').pop();
+                    const url = getRawUrl(item.path);
+                    const thumb = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=600&t=fit`;
+                    const html = `
+                    <div class="glass-panel p-3 h-full flex flex-col">
+                        <div class="pdf-preview-container mb-3">
+                            <img src="${thumb}" onerror="this.src='https://via.placeholder.com/400x600/1a1d29/38bdf8?text=PDF'">
+                        </div>
+                        <h3 class="text-xs font-bold text-slate-300 line-clamp-2 h-8 mb-3 w-full">${name}</h3>
+                        <a href="${url}" target="_blank" class="block w-full bg-red-600/20 text-red-500 text-center py-2 rounded-full text-[10px] font-bold hover:bg-red-600 hover:text-white transition mt-auto">READ NOW</a>
+                    </div>`;
+                    
+                    const lowerPath = item.path.toLowerCase();
+                    if (lowerPath.includes('by syed sakhir hashmi')) {
+                        if(gridSakhir) gridSakhir.innerHTML += html;
+                    } else if (lowerPath.includes('hashmi research hub')) {
+                        if(gridResearch) gridResearch.innerHTML += html;
+                    } else {
+                        if(gridOthers) gridOthers.innerHTML += html;
+                    }
+                    
+                    if(row) row.innerHTML += `<div class="row-item-wide">${html}</div>`;
+                }
+            });
+        }
+
+        function renderCodes() {
+            const grid = document.getElementById('grid-space');
+            const row = document.getElementById('row-space');
+            REPO_DATA.forEach(item => {
+                if (item.path.startsWith(CONFIG.folders.html) && item.path.toLowerCase().endsWith('.html')) {
+                    const name = item.path.split('/').pop();
+                    const html = `
+                    <div class="glass-panel p-6 flex justify-between items-center border-l-4 border-purple-500 h-full">
+                        <h3 class="font-bold text-white truncate mr-4">${name}</h3>
+                        <a href="${getRawUrl(item.path)}" target="_blank" class="bg-purple-600 text-white px-4 py-2 rounded-full text-xs font-bold shrink-0 mt-auto">VIEW</a>
+                    </div>`;
+                    grid.innerHTML += html;
+                    row.innerHTML += `<div class="row-item-wide">${html}</div>`;
+                }
+            });
+        }
+
+        async function renderSites() {
+            const grid = document.getElementById('grid-station');
+            const row = document.getElementById('row-station');
+            const siteFiles = REPO_DATA.filter(i => i.path.startsWith(CONFIG.folders.sites));
+            for (let file of siteFiles) {
+                if(file.type === 'blob') {
+                    const res = await fetch(getRawUrl(file.path));
+                    const text = await res.text();
+                    text.split('\n').forEach(line => {
+                        const parts = line.trim().split('|');
+                        const url = parts[1] || parts[0];
+                        if (url && url.startsWith('http')) {
+                            const html = `
+                            <div class="glass-panel p-5 flex items-center gap-4 h-full">
+                                <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center shrink-0"><i class="fas fa-link text-blue-400"></i></div>
+                                <div class="flex-1 truncate"><h3 class="font-bold text-white truncate text-sm">${parts[0] || 'Portal'}</h3></div>
+                                <a href="${url}" target="_blank" class="text-blue-400 shrink-0"><i class="fas fa-external-link-alt"></i></a>
+                            </div>`;
+                            grid.innerHTML += html;
+                            row.innerHTML += `<div class="row-item-wide">${html}</div>`;
+                        }
+                    });
+                }
+            }
+        }
+
+        function getRawUrl(path) { return `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/${path}`; }
+        
+        function switchTab(tabId) { 
+            // Clear search interactions
+            document.getElementById('globalSearch').value = '';
+            document.getElementById('sec-search-results').classList.add('hidden');
+            document.getElementById('main-nav').style.display = '';
+
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden')); 
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden'); 
+            document.getElementById(`tab-${tabId}`).classList.add('active'); 
+            
+            const bannerSec = document.getElementById('banner-section');
+            if (bannerSec) {
+                bannerSec.style.display = (tabId === 'home') ? 'block' : 'none';
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('globalSearch').value = '';
+            document.getElementById('globalSearch').dispatchEvent(new Event('input'));
+        }
+
+        // New function to scroll to specific sub-section
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function closeModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
+        
+        // Fully updated Global Search Function
+        document.getElementById('globalSearch').addEventListener('input', function(e) { 
+            const query = e.target.value.toLowerCase().trim(); 
+            const searchSec = document.getElementById('sec-search-results');
+            const searchGrid = document.getElementById('grid-search-results');
+            const nav = document.getElementById('main-nav');
+            const bannerSec = document.getElementById('banner-section');
+
+            if (query.length === 0) {
+                searchSec.classList.add('hidden');
+                nav.style.display = '';
+                // Re-trigger the active tab to restore view seamlessly
+                const activeTabId = document.querySelector('.tab-btn.active').id.replace('tab-', '');
+                switchTab(activeTabId);
+                return;
+            }
+
+            // Hide normal UI layout
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden')); 
+            nav.style.display = 'none';
+            if(bannerSec) bannerSec.style.display = 'none';
+            
+            searchSec.classList.remove('hidden');
+            searchGrid.innerHTML = '';
+            
+            let found = false;
+            // Prevent duplicate elements from 'home' row arrays and inner 'tab' grids
+            const uniqueContent = new Set();
+            
+            // Extract all data blocks from loaded tabs
+            document.querySelectorAll('.tab-content .glass-panel').forEach(card => { 
+                if (card.innerText.toLowerCase().includes(query)) {
+                    // Create a simple text hash to verify uniqueness
+                    const contentHash = card.innerHTML.replace(/\s+/g, '');
+                    if(!uniqueContent.has(contentHash)) {
+                        uniqueContent.add(contentHash);
+                        
+                        // Deep clone the matching element
+                        let clone = card.cloneNode(true);
+                        // Make sure it adapts gracefully into the new search results grid
+                        clone.style.width = '100%'; 
+                        
+                        searchGrid.appendChild(clone);
+                        found = true;
+                    }
+                } 
+            });
+
+            if(!found) {
+                searchGrid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400">No results found for "${query}"</div>`;
+            }
+        });
+        
+        init();
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+              navigator.serviceWorker.register('./sw.js')
+                .then((reg) => {
+                  console.log('Service Worker registered successfully:', reg.scope);
+                })
+                .catch((err) => {
+                  console.log('Service Worker registration failed:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
