@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hashverse-v1.0.2';
+const CACHE_NAME = 'hashverse-v1.0.3';
 const ASSETS_TO_CACHE = [
   './index.html',
   './manifest.json',
@@ -31,24 +31,33 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event (Offline First Strategy)
+// Fetch Event (Network First Strategy for dynamic content, fallback to cache)
 self.addEventListener('fetch', (event) => {
+  // GitHub API ya external requests ko bypass karein taake hamesha fresh data aaye
+  if (event.request.url.includes('api.github.com') || event.request.url.includes('raw.githubusercontent.com')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
+    fetch(event.request)
+      .then((networkResponse) => {
         return caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, networkResponse.clone());
           return networkResponse;
         });
-      }).catch(() => {
-        // Fallback for offline if resource is not in cache
-        if (event.request.headers.get('accept').includes('text/html')) {
-          return caches.match('./index.html');
-        }
-      });
-    })
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
+            return caches.match('./index.html');
+          }
+        });
+      })
   );
 });
